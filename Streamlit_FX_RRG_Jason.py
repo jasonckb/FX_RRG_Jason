@@ -165,6 +165,9 @@ st.title("FX Relative Rotation Graph (RRG) Dashboard")
 # Sidebar
 st.sidebar.header("Options")
 
+# Add slider for tail length
+tail_length = st.sidebar.slider("Tail Length", min_value=1, max_value=10, value=5, step=1)
+
 # Refresh button
 refresh_button = st.sidebar.button("Refresh Data")
 
@@ -178,15 +181,15 @@ hourly_data, _, _, _ = get_fx_data("Hourly")
 
 # Main content area
 st.subheader("Weekly RRG")
-fig_weekly = create_rrg_chart(daily_data.resample('W-FRI').last(), benchmark, fx_pairs, fx_names, "Weekly", 5)
+fig_weekly = create_rrg_chart(daily_data.resample('W-FRI').last(), benchmark, fx_pairs, fx_names, "Weekly", tail_length)
 st.plotly_chart(fig_weekly, use_container_width=True)
 
 st.subheader("Daily RRG")
-fig_daily = create_rrg_chart(daily_data, benchmark, fx_pairs, fx_names, "Daily", 5)
+fig_daily = create_rrg_chart(daily_data, benchmark, fx_pairs, fx_names, "Daily", tail_length)
 st.plotly_chart(fig_daily, use_container_width=True)
 
 st.subheader("Hourly RRG")
-fig_hourly = create_rrg_chart(hourly_data, benchmark, fx_pairs, fx_names, "Hourly", 5)
+fig_hourly = create_rrg_chart(hourly_data, benchmark, fx_pairs, fx_names, "Hourly", tail_length)
 st.plotly_chart(fig_hourly, use_container_width=True)
 
 # Show raw data if checkbox is selected
