@@ -1,9 +1,24 @@
 import streamlit as st
-import yfinance as yf
-import pandas as pd
-import numpy as np
-import plotly.graph_objects as go
-from datetime import datetime, timedelta
+import sys
+import traceback
+
+st.set_page_config(layout="wide", page_title="FX Relative Rotation Graph (RRG) Dashboard")
+
+st.title("FX Relative Rotation Graph (RRG) Dashboard")
+
+try:
+    import yfinance as yf
+    import pandas as pd
+    import numpy as np
+    import plotly.graph_objects as go
+    from datetime import datetime, timedelta
+except ImportError as e:
+    st.error(f"Error importing libraries: {e}")
+    st.error("Diagnostic Information:")
+    st.code(f"Python version: {sys.version}")
+    st.code(f"Sys.path: {sys.path}")
+    st.code(f"Traceback: {traceback.format_exc()}")
+    st.stop()
 
 st.set_page_config(layout="wide", page_title="FX Relative Rotation Graph (RRG) Dashboard")
 
