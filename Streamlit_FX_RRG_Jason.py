@@ -75,8 +75,8 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
     
     if timeframe == "Hourly":
         center_x = center_y = 100
-        range_x = max(range_x, 0.2)
-        range_y = max(range_y, 0.2)
+        range_x = max(range_x, 0.1)
+        range_y = max(range_y, 0.1)
         min_x = center_x - range_x * (1 + padding)
         max_x = center_x + range_x * (1 + padding)
         min_y = center_y - range_y * (1 + padding)
