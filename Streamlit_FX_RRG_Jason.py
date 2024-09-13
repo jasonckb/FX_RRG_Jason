@@ -129,7 +129,7 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         title=f"FX Relative Rotation Graph (RRG) ({timeframe})",
         xaxis_title="RS-Ratio",
         yaxis_title="RS-Momentum",
-        width=800,
+        width=1000,
         height=800,
         xaxis=dict(range=[min_x, max_x], title_font=dict(size=14)),
         yaxis=dict(range=[min_y, max_y], title_font=dict(size=14)),
