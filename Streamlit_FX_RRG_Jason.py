@@ -64,30 +64,24 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         rrg_data[f"{pair}_RS-Ratio"] = rs_ratio
         rrg_data[f"{pair}_RS-Momentum"] = rs_momentum
 
-    min_x = rrg_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].iloc[-tail_length:].min().min()
-    max_x = rrg_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].iloc[-tail_length:].max().max()
-    min_y = rrg_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].iloc[-tail_length:].min().min()
-    max_y = rrg_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].iloc[-tail_length:].max().max()
+    # Calculate the min and max values for the last 10 data points
+    last_10_data = rrg_data.iloc[-10:]
+    min_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].min().min()
+    max_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].max().max()
+    min_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].min().min()
+    max_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].max().max()
 
     padding = 0.1
     range_x = max_x - min_x
     range_y = max_y - min_y
     
-    if timeframe == "Hourly":
-        center_x = center_y = 100
-        range_x = max(range_x, 0.1)
-        range_y = max(range_y, 0.1)
-        min_x = center_x - range_x * (1 + padding)
-        max_x = center_x + range_x * (1 + padding)
-        min_y = center_y - range_y * (1 + padding)
-        max_y = center_y + range_y * (1 + padding)
-    else:
-        min_x -= range_x * padding
-        max_x += range_x * padding
-        min_y -= range_y * padding
-        max_y += range_y * padding
-        center_x = (min_x + max_x) / 2
-        center_y = (min_y + max_y) / 2
+    min_x -= range_x * padding
+    max_x += range_x * padding
+    min_y -= range_y * padding
+    max_y += range_y * padding
+    
+    center_x = 100
+    center_y = 100
 
     fig = go.Figure()
 
@@ -158,7 +152,6 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
     fig.add_annotation(x=max_x, y=max_y, text="領先", showarrow=False, font=label_font, xanchor="right", yanchor="top")
 
     return fig
-
 # Main Streamlit app
 st.title("FX Relative Rotation Graph (RRG) Dashboard")
 
