@@ -65,7 +65,7 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         rrg_data[f"{pair}_RS-Momentum"] = rs_momentum
 
     # Calculate the min and max values for the plotted data points
-    plotted_data = rrg_data.iloc[-max(tail_length, 10):]
+    plotted_data = rrg_data.iloc[-max(tail_length, 20):]
     min_x = plotted_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].min().min()
     max_x = plotted_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].max().max()
     min_y = plotted_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].min().min()
