@@ -41,8 +41,8 @@ def get_fx_data(timeframe):
         "CADUSD=X": "CAD", "JPYUSD=X": "JPY", "CHFUSD=X": "CHF", "CNYUSD=X": "CNY",
         "EURGBP=X": "EURGBP", "AUDNZD=X": "AUDNZD", "AUDCAD=X": "AUDCAD", "NZDCAD=X": "NZDCAD", 
         "AUDJPY=X": "AUDJPY", "NZDJPY=X": "NZDJPY", "EURJPY=X": "EURJPY",
-        "GBPJPY=X": "GBPJPY", "GBPAUD=X": "GBPAUD","EURAUD=X": "EURAUD", "GBPNZD=X": "GBPNZD", "EURNZD=X": "EURNZD"X 
-    }
+        "GBPJPY=X": "GBPJPY", "GBPAUD=X": "GBPAUD","EURAUD=X": "EURAUD", "GBPNZD=X": "GBPNZD", "EURNZD=X": "EURNZD" 
+    }#"DX-Y.NYB": "DXY", 
 
     tickers_to_download = [benchmark] + fx_pairs
     interval = "1h" if timeframe == "Hourly" else "1d"
