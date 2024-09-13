@@ -64,24 +64,8 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         rrg_data[f"{pair}_RS-Ratio"] = rs_ratio
         rrg_data[f"{pair}_RS-Momentum"] = rs_momentum
 
-    # Calculate the min and max values for the last 10 data points
-    last_10_data = rrg_data.iloc[-10:]
-    min_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].min().min()
-    max_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].max().max()
-    min_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].min().min()
-    max_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].max().max()
-
-    padding = 0.05  # 5% padding
-    range_x = max_x - min_x
-    range_y = max_y - min_y
-    
-    min_x -= range_x * padding
-    max_x += range_x * padding
-    min_y -= range_y * padding
-    max_y += range_y * padding
-    
-    center_x = 100
-    center_y = 100
+    # Initialize min and max values
+    min_x, max_x, min_y, max_y = float('inf'), float('-inf'), float('inf'), float('-inf')
 
     fig = go.Figure()
 
@@ -89,9 +73,9 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
     curve_colors = {"Lagging": "red", "Weakening": "orange", "Improving": "darkblue", "Leading": "darkgreen"}
 
     def get_quadrant(x, y):
-        if x < center_x and y < center_y: return "Lagging"
-        elif x >= center_x and y < center_y: return "Weakening"
-        elif x < center_x and y >= center_y: return "Improving"
+        if x < 100 and y < 100: return "Lagging"
+        elif x >= 100 and y < 100: return "Weakening"
+        elif x < 100 and y >= 100: return "Improving"
         else: return "Leading"
 
     for pair in fx_pairs:
@@ -99,6 +83,13 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         y_values = rrg_data[f"{pair}_RS-Momentum"].dropna()
         
         if len(x_values) > 0 and len(y_values) > 0:
+            # Use all data points to determine axes limits
+            min_x = min(min_x, x_values.min())
+            max_x = max(max_x, x_values.max())
+            min_y = min(min_y, y_values.min())
+            max_y = max(max_y, y_values.max())
+
+            # Use tail_length for plotting
             x_values = x_values.iloc[-tail_length:]
             y_values = y_values.iloc[-tail_length:]
             
@@ -125,6 +116,15 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
                 textfont=dict(color='black', size=10, family='Arial Black')
             ))
 
+    # Add padding to the axes
+    padding = 0.05
+    range_x = max_x - min_x
+    range_y = max_y - min_y
+    min_x -= range_x * padding
+    max_x += range_x * padding
+    min_y -= range_y * padding
+    max_y += range_y * padding
+
     fig.update_layout(
         title=f"FX Relative Rotation Graph (RRG) ({timeframe})",
         xaxis_title="RS-Ratio",
@@ -136,12 +136,12 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         plot_bgcolor='white',
         showlegend=False,
         shapes=[
-            dict(type="rect", xref="x", yref="y", x0=min(min_x, center_x), y0=center_y, x1=center_x, y1=max(max_y, center_y), fillcolor="lightblue", opacity=0.35, line_width=0),
-            dict(type="rect", xref="x", yref="y", x0=center_x, y0=center_y, x1=max(max_x, center_x), y1=max(max_y, center_y), fillcolor="lightgreen", opacity=0.35, line_width=0),
-            dict(type="rect", xref="x", yref="y", x0=min(min_x, center_x), y0=min(min_y, center_y), x1=center_x, y1=center_y, fillcolor="pink", opacity=0.35, line_width=0),
-            dict(type="rect", xref="x", yref="y", x0=center_x, y0=min(min_y, center_y), x1=max(max_x, center_x), y1=center_y, fillcolor="lightyellow", opacity=0.35, line_width=0),
-            dict(type="line", xref="x", yref="y", x0=center_x, y0=min_y, x1=center_x, y1=max_y, line=dict(color="black", width=1)),
-            dict(type="line", xref="x", yref="y", x0=min_x, y0=center_y, x1=max_x, y1=center_y, line=dict(color="black", width=1)),
+            dict(type="rect", xref="x", yref="y", x0=min_x, y0=100, x1=100, y1=max_y, fillcolor="lightblue", opacity=0.35, line_width=0),
+            dict(type="rect", xref="x", yref="y", x0=100, y0=100, x1=max_x, y1=max_y, fillcolor="lightgreen", opacity=0.35, line_width=0),
+            dict(type="rect", xref="x", yref="y", x0=min_x, y0=min_y, x1=100, y1=100, fillcolor="pink", opacity=0.35, line_width=0),
+            dict(type="rect", xref="x", yref="y", x0=100, y0=min_y, x1=max_x, y1=100, fillcolor="lightyellow", opacity=0.35, line_width=0),
+            dict(type="line", xref="x", yref="y", x0=100, y0=min_y, x1=100, y1=max_y, line=dict(color="black", width=1)),
+            dict(type="line", xref="x", yref="y", x0=min_x, y0=100, x1=max_x, y1=100, line=dict(color="black", width=1)),
         ]
     )
 
