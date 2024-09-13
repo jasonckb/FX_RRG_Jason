@@ -64,14 +64,16 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         rrg_data[f"{pair}_RS-Ratio"] = rs_ratio
         rrg_data[f"{pair}_RS-Momentum"] = rs_momentum
 
-    # Calculate the min and max values for the last 10 data points
+    # Always use the last 10 data points for each pair
     last_10_data = rrg_data.iloc[-10:]
+    
+    # Calculate the min and max values for all pairs in the last 10 data points
     min_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].min().min()
     max_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].max().max()
     min_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].min().min()
     max_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].max().max()
 
-    padding = 0.1
+    padding = 0.05  # Reduced padding to 5%
     range_x = max_x - min_x
     range_y = max_y - min_y
     
@@ -95,13 +97,10 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         else: return "Leading"
 
     for pair in fx_pairs:
-        x_values = rrg_data[f"{pair}_RS-Ratio"].dropna()
-        y_values = rrg_data[f"{pair}_RS-Momentum"].dropna()
+        x_values = last_10_data[f"{pair}_RS-Ratio"].dropna()
+        y_values = last_10_data[f"{pair}_RS-Momentum"].dropna()
         
         if len(x_values) > 0 and len(y_values) > 0:
-            x_values = x_values.iloc[-tail_length:]
-            y_values = y_values.iloc[-tail_length:]
-            
             current_quadrant = get_quadrant(x_values.iloc[-1], y_values.iloc[-1])
             color = curve_colors[current_quadrant]
             
@@ -136,10 +135,10 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         plot_bgcolor='white',
         showlegend=False,
         shapes=[
-            dict(type="rect", xref="x", yref="y", x0=min_x, y0=center_y, x1=center_x, y1=max_y, fillcolor="lightblue", opacity=0.35, line_width=0),
-            dict(type="rect", xref="x", yref="y", x0=center_x, y0=center_y, x1=max_x, y1=max_y, fillcolor="lightgreen", opacity=0.35, line_width=0),
-            dict(type="rect", xref="x", yref="y", x0=min_x, y0=min_y, x1=center_x, y1=center_y, fillcolor="pink", opacity=0.35, line_width=0),
-            dict(type="rect", xref="x", yref="y", x0=center_x, y0=min_y, x1=max_x, y1=center_y, fillcolor="lightyellow", opacity=0.35, line_width=0),
+            dict(type="rect", xref="x", yref="y", x0=min(min_x, center_x), y0=center_y, x1=center_x, y1=max(max_y, center_y), fillcolor="lightblue", opacity=0.35, line_width=0),
+            dict(type="rect", xref="x", yref="y", x0=center_x, y0=center_y, x1=max(max_x, center_x), y1=max(max_y, center_y), fillcolor="lightgreen", opacity=0.35, line_width=0),
+            dict(type="rect", xref="x", yref="y", x0=min(min_x, center_x), y0=min(min_y, center_y), x1=center_x, y1=center_y, fillcolor="pink", opacity=0.35, line_width=0),
+            dict(type="rect", xref="x", yref="y", x0=center_x, y0=min(min_y, center_y), x1=max(max_x, center_x), y1=center_y, fillcolor="lightyellow", opacity=0.35, line_width=0),
             dict(type="line", xref="x", yref="y", x0=center_x, y0=min_y, x1=center_x, y1=max_y, line=dict(color="black", width=1)),
             dict(type="line", xref="x", yref="y", x0=min_x, y0=center_y, x1=max_x, y1=center_y, line=dict(color="black", width=1)),
         ]
