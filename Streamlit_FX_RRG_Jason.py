@@ -71,7 +71,7 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
     min_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].min().min()
     max_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].max().max()
 
-    padding = 0..05
+    padding = 0.05
     range_x = max_x - min_x
     range_y = max_y - min_y
     
