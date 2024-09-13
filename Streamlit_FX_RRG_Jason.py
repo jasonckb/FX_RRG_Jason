@@ -42,7 +42,7 @@ def get_fx_data(timeframe):
         "EURGBP=X": "EURGBP", "AUDNZD=X": "AUDNZD", "AUDCAD=X": "AUDCAD", "NZDCAD=X": "NZDCAD", 
         "AUDJPY=X": "AUDJPY", "NZDJPY=X": "NZDJPY", "EURJPY=X": "EURJPY",
         "GBPJPY=X": "GBPJPY", "GBPAUD=X": "GBPAUD","EURAUD=X": "EURAUD", "GBPNZD=X": "GBPNZD", "EURNZD=X": "EURNZD"X 
-    }#"DX-Y.NYB": "DXY", 
+    }
 
     tickers_to_download = [benchmark] + fx_pairs
     interval = "1h" if timeframe == "Hourly" else "1d"
