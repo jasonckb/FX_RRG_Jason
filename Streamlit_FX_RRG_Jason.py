@@ -32,17 +32,17 @@ def get_fx_data(timeframe):
     else:  # Daily
         start_date = end_date - timedelta(days=500)
 
-    benchmark = "HKDUSD=X"
+    benchmark = "DX-Y.NYB"#"HKDUSD=X"
     fx_pairs = ["GBPUSD=X", "EURUSD=X", "AUDUSD=X", "NZDUSD=X", "CADUSD=X", "CHFUSD=X", "JPYUSD=X", "CNYUSD=X", 
-                "EURGBP=X", "AUDNZD=X", "AUDCAD=X", "NZDCAD=X", "DX-Y.NYB", "AUDJPY=X","NZDDJPY=X","EURJPY=X","GBPJPY=X",
-                "GBPAUD=X","EURAUD=X", "GBPNZD=X", "ERUNZD=X"]
+                "EURGBP=X", "AUDNZD=X", "AUDCAD=X", "NZDCAD=X",  "AUDJPY=X","NZDDJPY=X","EURJPY=X","GBPJPY=X",
+                "GBPAUD=X","EURAUD=X", "GBPNZD=X", "ERUNZD=X"]#"DX-Y.NYB"
     fx_names = {
         "GBPUSD=X": "GBP", "EURUSD=X": "EUR", "AUDUSD=X": "AUD", "NZDUSD=X": "NZD",
         "CADUSD=X": "CAD", "JPYUSD=X": "JPY", "CHFUSD=X": "CHF", "CNYUSD=X": "CNY",
         "EURGBP=X": "EURGBP", "AUDNZD=X": "AUDNZD", "AUDCAD=X": "AUDCAD", "NZDCAD=X": "NZDCAD", 
-        "DX-Y.NYB": "DXY", "AUDJPY=X": "AUDJPY", "NZDJPY=X": "NZDJPY", "EURJPY=X": "EURJPY",
-        "GBPJPY=X": "GBPJPY", "GBPAUD=X": "GBPAUD","EURAUD=X": "EURAUD", "GBPNZD=X": "GBPNZD", "EURNZD=X": "EURNZD"
-    }
+        "AUDJPY=X": "AUDJPY", "NZDJPY=X": "NZDJPY", "EURJPY=X": "EURJPY",
+        "GBPJPY=X": "GBPJPY", "GBPAUD=X": "GBPAUD","EURAUD=X": "EURAUD", "GBPNZD=X": "GBPNZD", "EURNZD=X": "EURNZD"X 
+    }#"DX-Y.NYB": "DXY", 
 
     tickers_to_download = [benchmark] + fx_pairs
     interval = "1h" if timeframe == "Hourly" else "1d"
