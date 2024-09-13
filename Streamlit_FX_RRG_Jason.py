@@ -5,7 +5,7 @@ import numpy as np
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
-#st.set_page_config(layout="wide", page_title="FX Relative Rotation Graph (RRG) Dashboard")
+st.set_page_config(layout="wide", page_title="FX Relative Rotation Graph (RRG) Dashboard")
 
 @st.cache_data
 def ma(data, period):
