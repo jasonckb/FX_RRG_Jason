@@ -1,3 +1,55 @@
+import streamlit as st
+import yfinance as yf
+import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
+from datetime import datetime, timedelta
+
+st.set_page_config(layout="wide", page_title="FX Relative Rotation Graph (RRG) Dashboard")
+
+@st.cache_data
+def ma(data, period):
+    return data.rolling(window=period).mean()
+
+@st.cache_data
+def calculate_rrg_values(data, benchmark):
+    sbr = data / benchmark
+    rs1 = ma(sbr, 10)
+    rs2 = ma(sbr, 26)
+    rs = 100 * ((rs1 - rs2) / rs2 + 1)
+    rm1 = ma(rs, 1)
+    rm2 = ma(rs, 4)
+    rm = 100 * ((rm1 - rm2) / rm2 + 1)
+    return rs, rm
+
+@st.cache_data
+def get_fx_data(timeframe):
+    end_date = datetime.now()
+    if timeframe == "Weekly":
+        start_date = end_date - timedelta(weeks=100)
+    elif timeframe == "Hourly":
+        start_date = end_date - timedelta(days=7)
+    else:  # Daily
+        start_date = end_date - timedelta(days=500)
+
+    benchmark = "HKDUSD=X"
+    fx_pairs = ["GBPUSD=X", "EURUSD=X", "AUDUSD=X", "NZDUSD=X", "CADUSD=X", "CHFUSD=X", "JPYUSD=X", "CNYUSD=X", 
+                "EURGBP=X", "AUDNZD=X", "AUDCAD=X", "NZDCAD=X", "DX-Y.NYB", "AUDJPY=X","NZDDJPY=X","EURJPY=X","GBPJPY=X",
+                "GBPAUD=X","EURAUD=X", "GBPNZD=X", "ERUNZD=X"]
+    fx_names = {
+        "GBPUSD=X": "GBP", "EURUSD=X": "EUR", "AUDUSD=X": "AUD", "NZDUSD=X": "NZD",
+        "CADUSD=X": "CAD", "JPYUSD=X": "JPY", "CHFUSD=X": "CHF", "CNYUSD=X": "CNY",
+        "EURGBP=X": "EURGBP", "AUDNZD=X": "AUDNZD", "AUDCAD=X": "AUDCAD", "NZDCAD=X": "NZDCAD", 
+        "DX-Y.NYB": "DXY", "AUDJPY=X": "AUDJPY", "NZDJPY=X": "NZDJPY", "EURJPY=X": "EURJPY",
+        "GBPJPY=X": "GBPJPY", "GBPAUD=X": "GBPAUD","EURAUD=X": "EURAUD", "GBPNZD=X": "GBPNZD", "EURNZD=X": "EURNZD"
+    }
+
+    tickers_to_download = [benchmark] + fx_pairs
+    interval = "1h" if timeframe == "Hourly" else "1d"
+    data = yf.download(tickers_to_download, start=start_date, end=end_date, interval=interval)['Close']
+    
+    return data, benchmark, fx_pairs, fx_names
+
 def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length):
     if timeframe == "Weekly":
         data_resampled = data.resample('W-FRI').last()
@@ -107,3 +159,47 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
     fig.add_annotation(x=max_x, y=max_y, text="領先", showarrow=False, font=label_font, xanchor="right", yanchor="top")
 
     return fig
+# Main Streamlit app
+st.title("FX Relative Rotation Graph (RRG) Dashboard")
+
+# Sidebar
+st.sidebar.header("Options")
+
+# Add slider for tail length
+tail_length = st.sidebar.slider("Tail Length", min_value=1, max_value=10, value=5, step=1)
+
+# Refresh button
+refresh_button = st.sidebar.button("Refresh Data")
+
+if refresh_button:
+    st.cache_data.clear()
+    st.rerun()
+
+# Get FX data
+daily_data, benchmark, fx_pairs, fx_names = get_fx_data("Daily")
+hourly_data, _, _, _ = get_fx_data("Hourly")
+
+# Main content area
+st.subheader("Weekly RRG")
+fig_weekly = create_rrg_chart(daily_data.resample('W-FRI').last(), benchmark, fx_pairs, fx_names, "Weekly", tail_length)
+st.plotly_chart(fig_weekly, use_container_width=True)
+
+st.subheader("Daily RRG")
+fig_daily = create_rrg_chart(daily_data, benchmark, fx_pairs, fx_names, "Daily", tail_length)
+st.plotly_chart(fig_daily, use_container_width=True)
+
+st.subheader("Hourly RRG")
+fig_hourly = create_rrg_chart(hourly_data, benchmark, fx_pairs, fx_names, "Hourly", tail_length)
+st.plotly_chart(fig_hourly, use_container_width=True)
+
+# Show raw data if checkbox is selected
+if st.checkbox("Show raw data"):
+    st.write("Daily Raw data:")
+    st.write(daily_data)
+    st.write("Hourly Raw data:")
+    st.write(hourly_data)
+    st.write("FX Pairs:")
+    st.write(fx_pairs)
+    st.write("Benchmark:")
+    st.write(benchmark)
+
