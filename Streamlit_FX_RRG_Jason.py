@@ -5,7 +5,7 @@ import numpy as np
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
-st.set_page_config(layout="wide", page_title="FX Relative Rotation Graph (RRG) Dashboard")
+#st.set_page_config(layout="wide", page_title="FX Relative Rotation Graph (RRG) Dashboard")
 
 @st.cache_data
 def ma(data, period):
@@ -32,16 +32,16 @@ def get_fx_data(timeframe):
     else:  # Daily
         start_date = end_date - timedelta(days=500)
 
-    benchmark = "HKDUSD=X"
+    benchmark = "DX-Y.NYB"  # Changed benchmark to DXY
     fx_pairs = ["GBPUSD=X", "EURUSD=X", "AUDUSD=X", "NZDUSD=X", "CADUSD=X", "CHFUSD=X", "JPYUSD=X", "CNYUSD=X", 
-                "EURGBP=X", "AUDNZD=X", "AUDCAD=X", "NZDCAD=X", "DX-Y.NYB", "AUDJPY=X","NZDDJPY=X","EURJPY=X","GBPJPY=X",
-                "GBPAUD=X","EURAUD=X", "GBPNZD=X", "ERUNZD=X"]
+                "EURGBP=X", "AUDNZD=X", "AUDCAD=X", "NZDCAD=X", "AUDJPY=X", "NZDDJPY=X", "EURJPY=X", "GBPJPY=X",
+                "GBPAUD=X", "EURAUD=X", "GBPNZD=X", "ERUNZD=X"]
     fx_names = {
         "GBPUSD=X": "GBP", "EURUSD=X": "EUR", "AUDUSD=X": "AUD", "NZDUSD=X": "NZD",
         "CADUSD=X": "CAD", "JPYUSD=X": "JPY", "CHFUSD=X": "CHF", "CNYUSD=X": "CNY",
         "EURGBP=X": "EURGBP", "AUDNZD=X": "AUDNZD", "AUDCAD=X": "AUDCAD", "NZDCAD=X": "NZDCAD", 
-        "DX-Y.NYB": "DXY", "AUDJPY=X": "AUDJPY", "NZDJPY=X": "NZDJPY", "EURJPY=X": "EURJPY",
-        "GBPJPY=X": "GBPJPY", "GBPAUD=X": "GBPAUD","EURAUD=X": "EURAUD", "GBPNZD=X": "GBPNZD", "EURNZD=X": "EURNZD"
+        "AUDJPY=X": "AUDJPY", "NZDJPY=X": "NZDJPY", "EURJPY=X": "EURJPY",
+        "GBPJPY=X": "GBPJPY", "GBPAUD=X": "GBPAUD", "EURAUD=X": "EURAUD", "GBPNZD=X": "GBPNZD", "EURNZD=X": "EURNZD"
     }
 
     tickers_to_download = [benchmark] + fx_pairs
@@ -126,10 +126,10 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
             ))
 
     fig.update_layout(
-        title=f"FX Relative Rotation Graph (RRG) ({timeframe})",
+        title=f"FX Relative Rotation Graph (RRG) ({timeframe}) - Benchmark: DXY",
         xaxis_title="RS-Ratio",
         yaxis_title="RS-Momentum",
-        width=1100,
+        width=1000,
         height=800,
         xaxis=dict(range=[min_x, max_x], title_font=dict(size=14)),
         yaxis=dict(range=[min_y, max_y], title_font=dict(size=14)),
@@ -152,6 +152,7 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
     fig.add_annotation(x=max_x, y=max_y, text="領先", showarrow=False, font=label_font, xanchor="right", yanchor="top")
 
     return fig
+
 # Main Streamlit app
 st.title("FX Relative Rotation Graph (RRG) Dashboard")
 
