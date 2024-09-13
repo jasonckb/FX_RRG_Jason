@@ -64,14 +64,14 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         rrg_data[f"{pair}_RS-Ratio"] = rs_ratio
         rrg_data[f"{pair}_RS-Momentum"] = rs_momentum
 
-    # Calculate the min and max values for the last 10 data points
-    last_10_data = rrg_data.iloc[-10:]
-    min_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].min().min()
-    max_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].max().max()
-    min_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].min().min()
-    max_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].max().max()
+    # Calculate the min and max values for the plotted data points
+    plotted_data = rrg_data.iloc[-max(tail_length, 10):]
+    min_x = plotted_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].min().min()
+    max_x = plotted_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].max().max()
+    min_y = plotted_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].min().min()
+    max_y = plotted_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].max().max()
 
-    padding = 0.05
+    padding = 0.1  # Increased padding
     range_x = max_x - min_x
     range_y = max_y - min_y
     
