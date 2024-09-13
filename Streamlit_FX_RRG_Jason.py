@@ -71,7 +71,7 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
     max_y = rrg_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].max().max()
 
     # Set a minimum range to ensure the chart is not too clustered
-    min_range = 4  # This ensures a minimum range of 4 units on each axis
+    min_range = 2  # This ensures a minimum range of 4 units on each axis
     center_x, center_y = 100, 100
 
     range_x = max(max_x - min_x, min_range)
