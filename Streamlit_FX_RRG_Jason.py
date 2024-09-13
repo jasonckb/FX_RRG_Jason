@@ -84,7 +84,7 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
     max_y = center_y + range_y / 2
 
     # Add some padding
-    padding = 0.1
+    padding = 0.03
     min_x -= range_x * padding
     max_x += range_x * padding
     min_y -= range_y * padding
