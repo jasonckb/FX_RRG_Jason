@@ -64,31 +64,24 @@ def create_rrg_chart(data, benchmark, fx_pairs, fx_names, timeframe, tail_length
         rrg_data[f"{pair}_RS-Ratio"] = rs_ratio
         rrg_data[f"{pair}_RS-Momentum"] = rs_momentum
 
-    # Calculate the overall min and max values
-    min_x = rrg_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].min().min()
-    max_x = rrg_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].max().max()
-    min_y = rrg_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].min().min()
-    max_y = rrg_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].max().max()
+    # Calculate the min and max values for the last 10 data points
+    last_10_data = rrg_data.iloc[-10:]
+    min_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].min().min()
+    max_x = last_10_data[[f"{pair}_RS-Ratio" for pair in fx_pairs]].max().max()
+    min_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].min().min()
+    max_y = last_10_data[[f"{pair}_RS-Momentum" for pair in fx_pairs]].max().max()
 
-    # Set a minimum range to ensure the chart is not too clustered
-    min_range = 2  # This ensures a minimum range of 4 units on each axis
-    center_x, center_y = 100, 100
-
-    range_x = max(max_x - min_x, min_range)
-    range_y = max(max_y - min_y, min_range)
-
-    # Adjust the min and max values to center the chart
-    min_x = center_x - range_x / 2
-    max_x = center_x + range_x / 2
-    min_y = center_y - range_y / 2
-    max_y = center_y + range_y / 2
-
-    # Add some padding
-    padding = 0.03
+    padding = 0.1
+    range_x = max_x - min_x
+    range_y = max_y - min_y
+    
     min_x -= range_x * padding
     max_x += range_x * padding
     min_y -= range_y * padding
     max_y += range_y * padding
+    
+    center_x = 100
+    center_y = 100
 
     fig = go.Figure()
 
@@ -202,4 +195,5 @@ if st.checkbox("Show raw data"):
     st.write(fx_pairs)
     st.write("Benchmark:")
     st.write(benchmark)
+
 
